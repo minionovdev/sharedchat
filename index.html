@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Общий чат (без сервера)</title>
-  <!-- GUN.js (децентрализованная БД) -->
+  <title>Общий чат (P2P, без сервера)</title>
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gun/lib/radix.js"></script>
@@ -30,7 +29,7 @@
       width:90%; max-width:400px;
     }
     .modal-content h2 { margin-bottom:1rem; color:#fff; }
-    .modal-content input, .modal-content textarea {
+    .modal-content input {
       width:100%; padding:10px; margin-bottom:1rem;
       border:none; border-radius:8px; background:#3a3a4e; color:#fff; font-size:1rem;
     }
@@ -55,6 +54,12 @@
       background:#3a3a4e; border:none; padding:6px 12px;
       border-radius:6px; color:#e0e0e0; cursor:pointer;
     }
+    .stats {
+      display:flex; gap:16px; padding:6px 20px;
+      background:#252538; border-bottom:1px solid #3a3a4e;
+      font-size:0.85rem; color:#aaa;
+    }
+    .stat-value { font-weight:bold; color:#5b5bf0; }
     .tabs { display:flex; background:#1e1e2f; border-bottom:1px solid #3a3a4e; }
     .tab {
       flex:1; text-align:center; padding:12px; cursor:pointer;
@@ -165,6 +170,11 @@
         <button id="logout-btn">Выйти</button>
       </div>
     </div>
+    <!-- СТАТИСТИКА -->
+    <div class="stats">
+      <div>👥 Участников: <span class="stat-value" id="users-count">0</span></div>
+      <div>💬 Сообщений: <span class="stat-value" id="messages-count">0</span></div>
+    </div>
     <div class="tabs">
       <div class="tab active" data-tab="public">💬 Общий чат</div>
       <div class="tab" data-tab="private">📩 Личные сообщения</div>
@@ -199,22 +209,18 @@
 (function() {
   // Подключаем GUN (децентрализованная БД)
   const gun = Gun({
-    peers: ['https://gun-manhattan.herokuapp.com/gun'] // публичный relay, можно не менять
+    peers: ['https://gun-manhattan.herokuapp.com/gun']
   });
 
-  // Хранилище профилей: key = nickname, value = { userId, avatar }
+  // Хранилище профилей
   const usersDB = gun.get('users');
-
   // Общий чат
   const publicDB = gun.get('public_messages');
 
-  // Текущий пользователь
   let currentUser = null;
+  let usersCache = {};   // nickname -> userData
+  let messagesCount = 0;
 
-  // Кэш пользователей
-  let usersCache = {};
-
-  // Вкладки и DOM
   const $ = id => document.getElementById(id);
   const regModal = $('reg-modal');
   const regNick = $('reg-nick');
@@ -249,6 +255,8 @@
   const privateInputRow = $('private-input-row');
   const privateInput = $('private-input');
   const privateSend = $('private-send');
+  const usersCountSpan = $('users-count');
+  const messagesCountSpan = $('messages-count');
 
   // Фильтр контента
   const forbidden = [
@@ -261,35 +269,53 @@
     const map = { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' };
     return String(s).replace(/[&<>"']/g, c => map[c]);
   }
-
-  // Генерация уникального ID (без криптографии)
   function genUID() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
   }
 
-  // Загрузка пользователей
+  // Подписка на пользователей (для подсчёта и кэша)
   usersDB.map().on((data, nickname) => {
     if (data && nickname !== '_') {
       usersCache[nickname] = data;
     }
+    updateUsersCount();
   });
 
-  // ---------- Регистрация / Вход ----------
+  function updateUsersCount() {
+    const count = Object.keys(usersCache).length;
+    usersCountSpan.textContent = count;
+  }
+
+  // Подписка на сообщения (для отображения и подсчёта)
+  publicDB.map().on((msg, id) => {
+    if (msg && msg.text) {
+      displayPublicMessage(msg, id);
+    }
+    updateMessagesCount();
+  });
+
+  function updateMessagesCount() {
+    // Быстрый подсчёт: считаем дочерние элементы publicDB
+    let count = 0;
+    publicDB.map().once((data, key) => {
+      if (data && data.text) count++;
+    });
+    // Из-за асинхронности, используем небольшой таймаут
+    setTimeout(() => {
+      let c = 0;
+      publicDB.map().once((d, k) => { if (d && d.text) c++; });
+      messagesCountSpan.textContent = c;
+    }, 100);
+  }
+
+  // Регистрация
   function register() {
     const nick = regNick.value.trim();
     if (!nick || nick.length < 2) { regError.textContent = 'Минимум 2 символа'; return; }
-    // Проверка, занят ли ник
-    if (usersCache[nick]) {
-      regError.textContent = 'Ник занят, выберите другой.';
-      return;
-    }
-    // Создаём пользователя
+    if (usersCache[nick]) { regError.textContent = 'Ник занят'; return; }
     const userId = genUID();
     const userData = { userId, nickname: nick, avatar: '' };
-    // Сохраняем в GUN
     usersDB.get(nick).put(userData);
-
-    // Сохраняем локально
     currentUser = userData;
     localStorage.setItem('gchat_user', JSON.stringify(currentUser));
     showMain();
@@ -300,7 +326,6 @@
     if (saved) {
       try {
         currentUser = JSON.parse(saved);
-        // Обновим данные в GUN при входе (чтобы аватар и ник актуализировались)
         usersDB.get(currentUser.nickname).put(currentUser);
         return true;
       } catch(e) {}
@@ -315,7 +340,7 @@
     hideMain();
   }
 
-  // ---------- Профили ----------
+  // Профили
   function showProfile(user) {
     profileAvatar.src = user.avatar || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%233a3a4e"/%3E%3Ctext x="50" y="65" font-size="40" text-anchor="middle" fill="white"%3E👤%3C/text%3E%3C/svg%3E';
     profileNick.textContent = user.nickname;
@@ -333,16 +358,13 @@
     const newNick = editNick.value.trim();
     const newAvatar = editAvatarUrl.value.trim();
     if (!newNick || newNick.length < 2) { editError.textContent = 'Ник не может быть пустым'; return; }
-    // Проверяем, не занят ли новый ник другим пользователем
     if (newNick !== currentUser.nickname && usersCache[newNick]) {
       editError.textContent = 'Ник занят другим пользователем.';
       return;
     }
-    // Удалить старый ключ, если ник поменялся
     if (newNick !== currentUser.nickname) {
-      usersDB.get(currentUser.nickname).put(null); // удалить старую запись
+      usersDB.get(currentUser.nickname).put(null);
     }
-    // Обновить текущего пользователя
     currentUser.nickname = newNick;
     currentUser.avatar = newAvatar;
     usersDB.get(newNick).put(currentUser);
@@ -353,19 +375,11 @@
 
   function updateSelfUI() {
     selfNick.textContent = currentUser.nickname;
-    selfAvatar.src = currentUser.avatar || 'data:image/svg+xml,...'; // тот же placeholder
+    selfAvatar.src = currentUser.avatar || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%233a3a4e"/%3E%3Ctext x="50" y="65" font-size="40" text-anchor="middle" fill="white"%3E👤%3C/text%3E%3C/svg%3E';
   }
 
-  // ---------- Общий чат ----------
-  // Сообщения будут храниться в виде множества с ключами-таймстемпами
-  publicDB.map().on((msg, id) => {
-    if (msg && msg.text) {
-      displayPublicMessage(msg, id);
-    }
-  });
-
+  // Общий чат
   function displayPublicMessage(msg, id) {
-    // Проверяем, нет ли уже такого сообщения в DOM
     if (document.querySelector(`.message[data-id="${id}"]`)) return;
     const div = document.createElement('div');
     div.className = 'message' + (currentUser && msg.userId === currentUser.userId ? ' own' : '');
@@ -381,18 +395,15 @@
         ${['👍','👎','❤️','😂','😮','😢'].map(e => `<span class="reaction" data-emoji="${e}" data-msgid="${id}">${e} ${(msg.reactions && msg.reactions[e]) || 0}</span>`).join('')}
       </div>
     `;
-    // Клик по нику → профиль
     div.querySelector('.msg-nick').addEventListener('click', (e) => {
       const uid = e.target.dataset.userid;
       const user = Object.values(usersCache).find(u => u.userId === uid);
       if (user) showProfile(user);
     });
-    // Клик по реакции
     div.querySelectorAll('.reaction').forEach(btn => {
       btn.addEventListener('click', () => {
         const emoji = btn.dataset.emoji;
         const msgId = btn.dataset.msgid;
-        // Обновляем реакции в GUN
         gun.get('public_messages').get(msgId).get('reactions').get(emoji).once(count => {
           const newCount = (count || 0) + 1;
           gun.get('public_messages').get(msgId).get('reactions').get(emoji).put(newCount);
@@ -420,7 +431,7 @@
     publicInput.value = '';
   }
 
-  // ---------- Личные сообщения ----------
+  // Личные сообщения
   let privateChatWith = null;
   function openPrivateChat(nick) {
     if (!currentUser) return;
@@ -433,7 +444,6 @@
     privateHeader.textContent = `Чат с @${user.nickname}`;
     privateHeader.classList.remove('hidden');
     privateInputRow.classList.remove('hidden');
-    // Очищаем и подписываемся на личные сообщения
     privateMessagesDiv.innerHTML = '';
     loadPrivateMessages();
     switchTab('private');
@@ -469,7 +479,6 @@
         ${['👍','👎','❤️','😂','😮','😢'].map(e => `<span class="reaction" data-emoji="${e}" data-msgid="${id}">${e} ${(msg.reactions && msg.reactions[e]) || 0}</span>`).join('')}
       </div>
     `;
-    // Аналогичные обработчики...
     div.querySelector('.msg-nick').addEventListener('click', (e) => {
       const uid = e.target.dataset.userid;
       const user = Object.values(usersCache).find(u => u.userId === uid);
@@ -510,7 +519,7 @@
     privateInput.value = '';
   }
 
-  // ---------- Переключение вкладок ----------
+  // Переключение вкладок
   let activeTab = 'public';
   function switchTab(tab) {
     activeTab = tab;
@@ -523,13 +532,14 @@
     container.scrollTop = container.scrollHeight;
   }
 
-  // ---------- Инициализация ----------
+  // Инициализация
   function showMain() {
     regModal.classList.add('hidden');
     mainUi.classList.remove('hidden');
     updateSelfUI();
     switchTab('public');
   }
+
   function hideMain() {
     mainUi.classList.add('hidden');
     regModal.classList.remove('hidden');
@@ -553,12 +563,14 @@
   closeProfileBtn.addEventListener('click', () => profileModal.classList.add('hidden'));
   selfBadge.addEventListener('click', () => showProfile(currentUser));
 
-  // Автовход
   if (autoLogin()) {
     showMain();
   } else {
     hideMain();
   }
+
+  // Периодическое обновление счетчиков (на всякий случай)
+  setInterval(updateMessagesCount, 5000);
 })();
 </script>
 </body>
