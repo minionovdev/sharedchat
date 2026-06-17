@@ -18,18 +18,17 @@
             --bubble-other: #1e2a3a;
             --success: #4ecca3;
             --warning: #f0a500;
+            --danger: #ff6b6b;
             --radius: 16px;
             --radius-sm: 10px;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
             --transition: 0.2s ease;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
@@ -42,8 +41,6 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* Фоновые частицы */
         .bg-particles {
             position: fixed;
             top: 0;
@@ -61,23 +58,12 @@
             animation: floatUp linear infinite;
         }
         @keyframes floatUp {
-            0% {
-                transform: translateY(110vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 0.5;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1.5);
-                opacity: 0;
-            }
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
 
-        /* Основной контейнер */
         .app-container {
             position: relative;
             z-index: 1;
@@ -94,8 +80,6 @@
             border: 1px solid var(--border);
             margin: 10px;
         }
-
-        /* Шапка */
         .chat-header {
             background: var(--surface2);
             padding: 16px 20px;
@@ -104,11 +88,14 @@
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+            gap: 12px;
         }
         .chat-header .title-group {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
+            min-width: 0;
         }
         .chat-header .icon-circle {
             width: 40px;
@@ -119,16 +106,23 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
         .chat-header h1 {
             font-size: 1.2rem;
             font-weight: 700;
             letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .chat-header .subtitle {
             font-size: 0.75rem;
             color: var(--text2);
             letter-spacing: 0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .stats-badge {
             background: var(--surface);
@@ -146,8 +140,26 @@
             font-size: 1.1rem;
             font-weight: 800;
         }
+        .btn-users {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            flex-shrink: 0;
+        }
+        .btn-users:hover {
+            background: var(--surface2);
+            border-color: var(--accent);
+        }
 
-        /* Область сообщений */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -158,6 +170,7 @@
             scroll-behavior: smooth;
             background: var(--surface);
             overscroll-behavior: contain;
+            position: relative;
         }
         .messages-area::-webkit-scrollbar {
             width: 5px;
@@ -170,30 +183,17 @@
             border-radius: 10px;
         }
 
-        /* Сообщения */
         .message-wrapper {
             display: flex;
-            animation: msgIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: msgIn 0.35s cubic-bezier(0.16,1,0.3,1);
         }
         @keyframes msgIn {
-            from {
-                opacity: 0;
-                transform: translateY(16px) scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(16px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .message-wrapper.mine {
-            justify-content: flex-end;
-        }
-        .message-wrapper.other {
-            justify-content: flex-start;
-        }
-        .message-wrapper.system {
-            justify-content: center;
-        }
+        .message-wrapper.mine { justify-content: flex-end; }
+        .message-wrapper.other { justify-content: flex-start; }
+        .message-wrapper.system { justify-content: center; }
         .message-bubble {
             max-width: 78%;
             padding: 10px 14px;
@@ -207,12 +207,12 @@
         .message-wrapper.mine .message-bubble {
             background: var(--bubble-mine);
             border-bottom-right-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
         }
         .message-wrapper.other .message-bubble {
             background: var(--bubble-other);
             border-bottom-left-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255,255,255,0.04);
         }
         .message-wrapper.system .message-bubble {
             background: transparent;
@@ -238,11 +238,8 @@
             letter-spacing: 0.4px;
             opacity: 0.8;
         }
-        .message-text {
-            letter-spacing: 0.2px;
-        }
+        .message-text { letter-spacing: 0.2px; }
 
-        /* Нижняя панель ввода */
         .input-area {
             display: flex;
             gap: 10px;
@@ -265,11 +262,7 @@
         }
         .input-area input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(233, 68, 96, 0.15);
-        }
-        .input-area input::placeholder {
-            color: #555;
-            letter-spacing: 0.3px;
+            box-shadow: 0 0 0 3px rgba(233,68,96,0.15);
         }
         .btn-send {
             width: 46px;
@@ -285,37 +278,120 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 14px rgba(233, 68, 96, 0.35);
+            box-shadow: 0 4px 14px rgba(233,68,96,0.35);
         }
         .btn-send:hover {
             background: #ff5a75;
             transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(233, 68, 96, 0.5);
         }
-        .btn-send:active {
-            transform: scale(0.93);
-            transition: 0.08s ease;
+        .btn-send:active { transform: scale(0.93); }
+
+        /* Панель пользователей */
+        .user-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 260px;
+            max-width: 80%;
+            height: 100%;
+            background: var(--surface2);
+            border-left: 1px solid var(--border);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.5);
         }
-        .btn-send svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
+        .user-panel.open {
+            transform: translateX(0);
+        }
+        .user-panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .user-panel-header h3 {
+            font-size: 1rem;
+            letter-spacing: 0.2px;
+        }
+        .btn-close-panel {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .btn-close-panel:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .user-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 2px;
+            font-size: 0.9rem;
+        }
+        .user-item .user-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .user-item .user-name {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .user-item.you {
+            background: rgba(233,68,96,0.15);
         }
 
-        /* Модальное окно (никнейм) */
+        /* Toast уведомление */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Модалка */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0,0,0,0.75);
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
         }
         .modal-dialog {
             background: var(--surface);
@@ -324,31 +400,16 @@
             width: 90%;
             max-width: 420px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             border: 1px solid var(--border);
-            animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: modalPop 0.4s cubic-bezier(0.16,1,0.3,1);
         }
         @keyframes modalPop {
-            from {
-                transform: scale(0.85);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
-        .modal-dialog h2 {
-            margin-bottom: 6px;
-            font-size: 1.5rem;
-            letter-spacing: -0.3px;
-        }
-        .modal-dialog .modal-subtitle {
-            color: var(--text2);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-            letter-spacing: 0.3px;
-        }
+        .modal-dialog h2 { margin-bottom: 6px; font-size: 1.5rem; }
+        .modal-dialog .modal-subtitle { color: var(--text2); margin-bottom: 20px; }
         .modal-dialog input {
             width: 100%;
             padding: 14px 18px;
@@ -359,505 +420,438 @@
             font-size: 1rem;
             outline: none;
             text-align: center;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
         }
         .modal-dialog input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(233, 68, 96, 0.1);
         }
-        .modal-dialog .btn-join {
+        .btn-join {
             margin-top: 18px;
             width: 100%;
             padding: 14px;
             border-radius: 25px;
-            border: none;
             background: var(--accent);
             color: #fff;
-            font-size: 1.05rem;
             font-weight: 700;
             cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            box-shadow: 0 4px 18px rgba(233, 68, 96, 0.3);
+            border: none;
         }
-        .modal-dialog .btn-join:hover {
-            background: #ff5a75;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px rgba(233, 68, 96, 0.45);
-        }
-        .modal-dialog .btn-join:active {
-            transform: scale(0.96);
-            transition: 0.08s ease;
-        }
-        .modal-dialog .error-text {
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 8px;
-            min-height: 20px;
-            letter-spacing: 0.3px;
-        }
+        .error-text { color: #ff6b6b; min-height: 20px; }
 
-        /* Адаптивность */
         @media (max-width: 500px) {
-            .app-container {
-                height: 100vh;
-                max-height: 100vh;
-                border-radius: 0;
-                margin: 0;
-                border: none;
-            }
-            .chat-header {
-                padding: 12px 14px;
-            }
-            .chat-header h1 {
-                font-size: 1rem;
-            }
-            .stats-badge {
-                padding: 6px 10px;
-                font-size: 0.7rem;
-            }
-            .messages-area {
-                padding: 10px;
-                gap: 4px;
-            }
-            .message-bubble {
-                max-width: 85%;
-                font-size: 0.85rem;
-                padding: 8px 11px;
-            }
-            .input-area {
-                padding: 8px 10px;
-                gap: 6px;
-            }
-            .input-area input {
-                padding: 10px 14px;
-                font-size: 0.88rem;
-            }
-            .btn-send {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
-            }
+            .app-container { height: 100vh; max-height: 100vh; border-radius: 0; margin: 0; border: none; }
+            .chat-header { padding: 12px; }
+            .btn-users { width: 32px; height: 32px; }
         }
     </style>
 </head>
 <body>
+<div class="bg-particles" id="particles"></div>
 
-    <!-- Фоновые частицы -->
-    <div class="bg-particles" id="particles"></div>
-
-    <!-- Модальное окно входа -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-dialog">
-            <h2>💬 Добро пожаловать!</h2>
-            <p class="modal-subtitle">Придумайте никнейм, чтобы войти в чат</p>
-            <input
-            type="text"
-            id="nicknameInput"
-            placeholder="Ваш никнейм..."
-            maxlength="24"
-            autocomplete="off"
-            autofocus
-            >
-            <div class="error-text" id="errorText"></div>
-            <button class="btn-join" id="btnJoin">🚀 Войти в чат</button>
-        </div>
+<!-- Модалка входа -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-dialog">
+        <h2>💬 Добро пожаловать!</h2>
+        <p class="modal-subtitle">Придумайте никнейм, чтобы войти в чат</p>
+        <input type="text" id="nicknameInput" placeholder="Ваш никнейм..." maxlength="24" autocomplete="off" autofocus>
+        <div class="error-text" id="errorText"></div>
+        <button class="btn-join" id="btnJoin">🚀 Войти в чат</button>
     </div>
+</div>
 
-    <!-- Основной интерфейс чата -->
-    <div class="app-container" id="appContainer" style="display:none;">
-        <div class="chat-header">
-            <div class="title-group">
-                <div class="icon-circle">💬</div>
-                <div>
-                    <h1>Общий чат</h1>
-                    <div class="subtitle" id="onlineStatus">Подключение...</div>
-                </div>
-            </div>
-            <div class="stats-badge">
-                📨 <span class="count" id="totalCount">0</span> сообщ.
+<!-- Основной чат -->
+<div class="app-container" id="appContainer" style="display:none;">
+    <div class="chat-header">
+        <div class="title-group">
+            <div class="icon-circle">💬</div>
+            <div>
+                <h1>Общий чат</h1>
+                <div class="subtitle" id="onlineStatus">Подключение...</div>
             </div>
         </div>
+        <div class="stats-badge">
+            📨 <span class="count" id="totalCount">0</span> сообщ.
+        </div>
+        <button class="btn-users" id="btnToggleUsers" title="Список участников">👥</button>
+    </div>
+    <div style="position: relative; flex: 1; overflow: hidden;">
         <div class="messages-area" id="messagesArea">
             <div class="message-wrapper system">
-                <div class="message-bubble">Добро пожаловать в чат! Напишите первое сообщение ✨</div>
+                <div class="message-bubble">Добро пожаловать в чат! ✨</div>
             </div>
         </div>
-        <div class="input-area">
-            <input
-            type="text"
-            id="messageInput"
-            placeholder="Введите сообщение..."
-            maxlength="500"
-            autocomplete="off"
-            >
-            <button class="btn-send" id="btnSend" title="Отправить">
-                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
+        <!-- Боковая панель пользователей -->
+        <div class="user-panel" id="userPanel">
+            <div class="user-panel-header">
+                <h3>👥 Участники</h3>
+                <button class="btn-close-panel" id="btnClosePanel">&times;</button>
+            </div>
+            <div class="user-list" id="userList"></div>
         </div>
     </div>
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Введите сообщение..." maxlength="500" autocomplete="off">
+        <button class="btn-send" id="btnSend" title="Отправить">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+    </div>
+</div>
 
-    <script>
-        (function() {
-            // ============ DOM элементы ============
-            const modalOverlay = document.getElementById('modalOverlay');
-            const nicknameInput = document.getElementById('nicknameInput');
-            const errorText = document.getElementById('errorText');
-            const btnJoin = document.getElementById('btnJoin');
-            const appContainer = document.getElementById('appContainer');
-            const messagesArea = document.getElementById('messagesArea');
-            const messageInput = document.getElementById('messageInput');
-            const btnSend = document.getElementById('btnSend');
-            const totalCountEl = document.getElementById('totalCount');
-            const onlineStatus = document.getElementById('onlineStatus');
-            const particlesContainer = document.getElementById('particles');
+<!-- Toast для ошибок фильтра -->
+<div class="toast" id="toast"></div>
 
-            // ============ Состояние ============
-            let nickname = '';
-            let ws = null;
-            let totalMessageCount = 0;
-            let reconnectTimer = null;
-            let reconnectAttempts = 0;
-            const MAX_RECONNECT_DELAY = 10000;
+<script>
+(function() {
+    // DOM элементы
+    const modalOverlay = document.getElementById('modalOverlay');
+    const nicknameInput = document.getElementById('nicknameInput');
+    const errorText = document.getElementById('errorText');
+    const btnJoin = document.getElementById('btnJoin');
+    const appContainer = document.getElementById('appContainer');
+    const messagesArea = document.getElementById('messagesArea');
+    const messageInput = document.getElementById('messageInput');
+    const btnSend = document.getElementById('btnSend');
+    const totalCountEl = document.getElementById('totalCount');
+    const onlineStatus = document.getElementById('onlineStatus');
+    const particlesContainer = document.getElementById('particles');
+    const btnToggleUsers = document.getElementById('btnToggleUsers');
+    const userPanel = document.getElementById('userPanel');
+    const btnClosePanel = document.getElementById('btnClosePanel');
+    const userList = document.getElementById('userList');
+    const toast = document.getElementById('toast');
 
-            // ============ Фоновые частицы ============
-            function createParticles() {
-                const colors = ['#e94560', '#533483', '#4ecca3', '#f0a500', '#7b68ee', '#ff6b9d'];
-                for (let i = 0; i < 35; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    const size = Math.random() * 5 + 2;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    particle.style.left = Math.random() * 100 + '%';
-                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-                    particle.style.animationDelay = (Math.random() * 10) + 's';
-                    particlesContainer.appendChild(particle);
-                }
+    // Состояние
+    let nickname = '';
+    let ws = null;
+    let totalMessageCount = 0;
+    let reconnectTimer = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_DELAY = 10000;
+    let currentUsers = []; // храним массив никнеймов
+
+    // Чёрный список (реклама, порно, дети и пр.)
+    const forbiddenPatterns = [
+        /реклама|раскрутка|продвижение|куп[ии]ть|заказ[аы]ть|скидк[аи]|акци[яи]/i,
+        /https?:\/\/|www\./i,
+        /порно|секс|трах|интим|эротик|18\+|xxx/i,
+        /педофил|детск[аоийе] порно|малолет|cp\b/i,
+        /наркот[ии]к|соль|спайс|закладк[аи]/i,
+        /прода[мж]|обменяю|меняю/i,
+        /(^|\s)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\s|$)/ // IP адреса
+    ];
+
+    function isMessageForbidden(text) {
+        return forbiddenPatterns.some(pattern => pattern.test(text));
+    }
+
+    function showToast(msg, duration = 2500) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    // Частицы
+    function createParticles() {
+        const colors = ['#e94560','#533483','#4ecca3','#f0a500','#7b68ee','#ff6b9d'];
+        for (let i=0; i<35; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random()*5+2;
+            p.style.width = size+'px';
+            p.style.height = size+'px';
+            p.style.left = Math.random()*100+'%';
+            p.style.background = colors[Math.floor(Math.random()*colors.length)];
+            p.style.animationDuration = (Math.random()*12+8)+'s';
+            p.style.animationDelay = (Math.random()*10)+'s';
+            particlesContainer.appendChild(p);
+        }
+    }
+    createParticles();
+
+    function getColorForNickname(name) {
+        let hash = 0;
+        for (let i=0; i<name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash<<5)-hash);
+            hash = hash & hash;
+        }
+        const hue = Math.abs(hash) % 360;
+        return `hsl(${hue}, 60%, 58%)`;
+    }
+
+    function formatTime(ts) {
+        const d = new Date(ts);
+        return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function scrollToBottom(smooth) {
+        requestAnimationFrame(() => {
+            messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+        });
+    }
+    function isNearBottom() {
+        return messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight < 120;
+    }
+
+    function addMessageToDOM(msg) {
+        const wasNearBottom = isNearBottom();
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message-wrapper';
+        if (msg.type === 'system') {
+            wrapper.classList.add('system');
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = msg.text;
+            wrapper.appendChild(bubble);
+        } else {
+            const isMine = msg.nickname === nickname;
+            wrapper.classList.add(isMine ? 'mine' : 'other');
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            if (!isMine && msg.nickname) {
+                const nick = document.createElement('div');
+                nick.className = 'message-nickname';
+                nick.style.color = getColorForNickname(msg.nickname);
+                nick.textContent = msg.nickname;
+                bubble.appendChild(nick);
             }
-            createParticles();
+            const text = document.createElement('div');
+            text.className = 'message-text';
+            text.textContent = msg.text;
+            bubble.appendChild(text);
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = formatTime(msg.timestamp);
+            bubble.appendChild(time);
+            wrapper.appendChild(bubble);
+        }
+        messagesArea.appendChild(wrapper);
+        if (wasNearBottom) scrollToBottom(true);
+    }
 
-            // ============ Генерация цвета по никнейму ============
-            function getColorForNickname(name) {
-                let hash = 0;
-                for (let i = 0; i < name.length; i++) {
-                    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-                    hash = hash & hash; // Convert to 32bit integer
-                }
-                const hue = Math.abs(hash) % 360;
-                return 'hsl(' + hue + ', 60%, 58%)';
+    function updateTotalCount(count) {
+        totalMessageCount = count;
+        totalCountEl.textContent = count;
+        totalCountEl.style.transform = 'scale(1.25)';
+        setTimeout(() => totalCountEl.style.transform = 'scale(1)', 200);
+    }
+
+    // Обновление панели пользователей
+    function renderUserList(users) {
+        currentUsers = users || [];
+        userList.innerHTML = '';
+        if (currentUsers.length === 0) {
+            userList.innerHTML = '<div style="padding:12px;color:var(--text2)">Нет участников</div>';
+            return;
+        }
+        currentUsers.forEach(userNick => {
+            const item = document.createElement('div');
+            item.className = 'user-item';
+            if (userNick === nickname) item.classList.add('you');
+            const dot = document.createElement('div');
+            dot.className = 'user-dot';
+            dot.style.background = getColorForNickname(userNick);
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'user-name';
+            nameSpan.textContent = userNick + (userNick === nickname ? ' (вы)' : '');
+            item.appendChild(dot);
+            item.appendChild(nameSpan);
+            userList.appendChild(item);
+        });
+    }
+
+    // WebSocket
+    function connectWebSocket() {
+        if (ws && ws.readyState === WebSocket.OPEN) return;
+        const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = protocol + '//' + location.host;
+
+        try {
+            ws = new WebSocket(wsUrl);
+        } catch (e) {
+            onlineStatus.textContent = 'Ошибка подключения';
+            scheduleReconnect();
+            return;
+        }
+
+        ws.onopen = () => {
+            console.log('WS открыт');
+            reconnectAttempts = 0;
+            // Сброс таймера переподключения
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
             }
+            onlineStatus.textContent = '🟢 Онлайн';
+            onlineStatus.style.color = 'var(--success)';
+            ws.send(JSON.stringify({ type: 'join', nickname }));
+        };
 
-            // ============ Форматирование времени ============
-            function formatTime(timestamp) {
-                const d = new Date(timestamp);
-                const h = String(d.getHours()).padStart(2, '0');
-                const m = String(d.getMinutes()).padStart(2, '0');
-                return h + ':' + m;
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                handleServerMessage(data);
+            } catch (e) {
+                console.error('Ошибка парсинга', e);
             }
+        };
 
-            // ============ Прокрутка вниз ============
-            function scrollToBottom(smooth) {
-                requestAnimationFrame(() => {
-                    messagesArea.scrollTo({
-                        top: messagesArea.scrollHeight,
-                        behavior: smooth ? 'smooth' : 'instant'
-                    });
-                });
-            }
+        ws.onclose = (event) => {
+            console.log('WS закрыт', event.code);
+            onlineStatus.textContent = '🔴 Переподключение...';
+            onlineStatus.style.color = 'var(--warning)';
+            ws = null;
+            scheduleReconnect();
+        };
 
-            function isNearBottom() {
-                const threshold = 120;
-                return messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight <
-                    threshold;
-            }
+        ws.onerror = () => {
+            onlineStatus.textContent = '⚠️ Ошибка связи';
+            onlineStatus.style.color = 'var(--danger)';
+        };
+    }
 
-            // ============ Добавление сообщения в DOM ============
-            function addMessageToDOM(msg) {
-                const wasNearBottom = isNearBottom();
-                const wrapper = document.createElement('div');
-                wrapper.classList.add('message-wrapper');
-
-                if (msg.type === 'system') {
-                    wrapper.classList.add('system');
-                    const bubble = document.createElement('div');
-                    bubble.classList.add('message-bubble');
-                    bubble.textContent = msg.text;
-                    wrapper.appendChild(bubble);
-                } else {
-                    const isMine = msg.nickname === nickname;
-                    wrapper.classList.add(isMine ? 'mine' : 'other');
-
-                    const bubble = document.createElement('div');
-                    bubble.classList.add('message-bubble');
-
-                    if (!isMine && msg.nickname) {
-                        const nickEl = document.createElement('div');
-                        nickEl.classList.add('message-nickname');
-                        nickEl.style.color = getColorForNickname(msg.nickname);
-                        nickEl.textContent = msg.nickname;
-                        bubble.appendChild(nickEl);
-                    }
-
-                    const textEl = document.createElement('div');
-                    textEl.classList.add('message-text');
-                    textEl.textContent = msg.text;
-                    bubble.appendChild(textEl);
-
-                    const timeEl = document.createElement('div');
-                    timeEl.classList.add('message-time');
-                    timeEl.textContent = formatTime(msg.timestamp);
-                    bubble.appendChild(timeEl);
-
-                    wrapper.appendChild(bubble);
-                }
-
-                messagesArea.appendChild(wrapper);
-
-                if (wasNearBottom) {
-                    scrollToBottom(true);
-                }
-            }
-
-            // ============ Обновление счётчика ============
-            function updateTotalCount(count) {
-                totalMessageCount = count;
-                totalCountEl.textContent = count;
-                // Небольшая анимация
-                totalCountEl.style.transform = 'scale(1.25)';
-                setTimeout(() => { totalCountEl.style.transform = 'scale(1)'; }, 200);
-            }
-
-            // ============ WebSocket подключение ============
-            function connectWebSocket() {
-                if (ws && ws.readyState === WebSocket.OPEN) return;
-
-                const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = protocol + '//' + location.host;
-                // Если мы на GitHub Pages, то location.host — это страница Pages,
-                // и нужно подключиться к своему серверу.
-                // Для локальной разработки / деплоя на одном сервере — location.host работает.
-                // Если сервер отдельно, раскомментируйте строку ниже и укажите адрес:
-                // const wsUrl = 'wss://your-server.com';
-
-                try {
-                    ws = new WebSocket(wsUrl);
-                } catch (e) {
-                    onlineStatus.textContent = 'Ошибка подключения';
-                    scheduleReconnect();
-                    return;
-                }
-
-                ws.onopen = () => {
-                    console.log('WebSocket подключён');
-                    reconnectAttempts = 0;
-                    onlineStatus.textContent = '🟢 Онлайн';
-                    onlineStatus.style.color = 'var(--success)';
-                    // Отправляем информацию о присоединении
-                    ws.send(JSON.stringify({ type: 'join', nickname: nickname }));
-                };
-
-                ws.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        handleServerMessage(data);
-                    } catch (e) {
-                        console.error('Ошибка парсинга сообщения:', e);
-                    }
-                };
-
-                ws.onclose = (event) => {
-                    console.log('WebSocket закрыт, код:', event.code);
-                    onlineStatus.textContent = '🔴 Переподключение...';
-                    onlineStatus.style.color = 'var(--warning)';
-                    ws = null;
-                    scheduleReconnect();
-                };
-
-                ws.onerror = (err) => {
-                    console.error('WebSocket ошибка:', err);
-                    onlineStatus.textContent = '⚠️ Ошибка связи';
-                    onlineStatus.style.color = '#ff6b6b';
-                };
-            }
-
-            function scheduleReconnect() {
-                if (reconnectTimer) return;
-                const delay = Math.min(1000 * Math.pow(1.8, reconnectAttempts), MAX_RECONNECT_DELAY);
-                reconnectAttempts++;
-                onlineStatus.textContent = '🟡 Переподключение через ' + Math.round(delay / 1000) + 'с...';
-                onlineStatus.style.color = 'var(--warning)';
-                reconnectTimer = setTimeout(() => {
-                    reconnectTimer = null;
-                    if (!ws || ws.readyState !== WebSocket.OPEN) {
-                        connectWebSocket();
-                    }
-                }, delay);
-            }
-
-            function handleServerMessage(data) {
-                switch (data.type) {
-                    case 'history':
-                        // Загружаем историю сообщений
-                        messagesArea.innerHTML = '';
-                        if (data.messages && data.messages.length > 0) {
-                            data.messages.forEach(msg => addMessageToDOM(msg));
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.classList.add('message-wrapper', 'system');
-                            const bubble = document.createElement('div');
-                            bubble.classList.add('message-bubble');
-                            bubble.textContent = '💬 Пока сообщений нет. Будьте первым!';
-                            wrapper.appendChild(bubble);
-                            messagesArea.appendChild(wrapper);
-                        }
-                        updateTotalCount(data.totalCount || 0);
-                        scrollToBottom(false);
-                        break;
-
-                    case 'message':
-                        addMessageToDOM(data.message);
-                        updateTotalCount(data.totalCount);
-                        break;
-
-                    case 'system':
-                        addMessageToDOM({ type: 'system', text: data.text, timestamp: Date.now() });
-                        if (data.totalCount !== undefined) {
-                            updateTotalCount(data.totalCount);
-                        }
-                        break;
-
-                    case 'users':
-                        const count = data.users ? data.users.length : 0;
-                        onlineStatus.textContent = '🟢 Онлайн · ' + count + ' участник' +
-                            getPlural(count);
-                        onlineStatus.style.color = 'var(--success)';
-                        break;
-
-                    case 'error':
-                        console.warn('Серверная ошибка:', data.text);
-                        if (data.text && data.text.includes('никнейм')) {
-                            // Показываем модалку заново
-                            showModal('Этот никнейм уже занят. Выберите другой.');
-                        }
-                        break;
-
-                    default:
-                        console.log('Неизвестный тип сообщения:', data.type);
-                }
-            }
-
-            function getPlural(n) {
-                if (n % 10 === 1 && n % 100 !== 11) return 'а';
-                if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return 'ов';
-                return 'ов';
-            }
-
-            // ============ Отправка сообщения ============
-            function sendMessage() {
-                const text = messageInput.value.trim();
-                if (!text) return;
-                if (!ws || ws.readyState !== WebSocket.OPEN) {
-                    onlineStatus.textContent = '⚠️ Нет соединения. Переподключение...';
-                    onlineStatus.style.color = '#ff6b6b';
-                    connectWebSocket();
-                    return;
-                }
-                ws.send(JSON.stringify({ type: 'message', text: text }));
-                messageInput.value = '';
-                messageInput.focus();
-            }
-
-            // ============ Модальное окно ============
-            function showModal(errorMsg) {
-                modalOverlay.style.display = 'flex';
-                appContainer.style.display = 'none';
-                errorText.textContent = errorMsg || '';
-                nicknameInput.value = nickname || '';
-                setTimeout(() => nicknameInput.focus(), 150);
-            }
-
-            function hideModal() {
-                modalOverlay.style.display = 'none';
-                appContainer.style.display = 'flex';
-                messageInput.focus();
-            }
-
-            // ============ Обработчики событий ============
-            btnJoin.addEventListener('click', () => {
-                const rawName = nicknameInput.value.trim();
-                if (!rawName) {
-                    errorText.textContent = 'Пожалуйста, введите никнейм';
-                    nicknameInput.focus();
-                    return;
-                }
-                if (rawName.length < 2) {
-                    errorText.textContent = 'Никнейм должен содержать минимум 2 символа';
-                    nicknameInput.focus();
-                    return;
-                }
-                if (rawName.length > 24) {
-                    errorText.textContent = 'Никнейм слишком длинный (макс. 24 символа)';
-                    nicknameInput.focus();
-                    return;
-                }
-                // Проверка на запрещённые символы
-                if (!/^[a-zA-Zа-яА-ЯёЁ0-9_\-\s]+$/.test(rawName)) {
-                    errorText.textContent = 'Только буквы, цифры, пробелы, _ и -';
-                    nicknameInput.focus();
-                    return;
-                }
-                nickname = rawName;
-                errorText.textContent = '';
-                hideModal();
+    function scheduleReconnect() {
+        if (reconnectTimer) return;
+        const delay = Math.min(1000 * Math.pow(1.8, reconnectAttempts), MAX_RECONNECT_DELAY);
+        reconnectAttempts++;
+        onlineStatus.textContent = '🟡 Переподключение через ' + Math.round(delay/1000) + 'с...';
+        onlineStatus.style.color = 'var(--warning)';
+        reconnectTimer = setTimeout(() => {
+            reconnectTimer = null;
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
                 connectWebSocket();
-            });
+            }
+        }, delay);
+    }
 
-            nicknameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    btnJoin.click();
+    function handleServerMessage(data) {
+        switch (data.type) {
+            case 'history':
+                messagesArea.innerHTML = '';
+                if (data.messages && data.messages.length) {
+                    data.messages.forEach(msg => addMessageToDOM(msg));
+                } else {
+                    const sys = document.createElement('div');
+                    sys.className = 'message-wrapper system';
+                    sys.innerHTML = '<div class="message-bubble">💬 Пока сообщений нет</div>';
+                    messagesArea.appendChild(sys);
                 }
-            });
-
-            btnSend.addEventListener('click', sendMessage);
-
-            messageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
+                updateTotalCount(data.totalCount || 0);
+                scrollToBottom(false);
+                if (data.users) renderUserList(data.users);
+                break;
+            case 'message':
+                addMessageToDOM(data.message);
+                updateTotalCount(data.totalCount);
+                break;
+            case 'system':
+                addMessageToDOM({ type: 'system', text: data.text, timestamp: Date.now() });
+                if (data.totalCount !== undefined) updateTotalCount(data.totalCount);
+                break;
+            case 'users':
+                renderUserList(data.users);
+                const cnt = data.users ? data.users.length : 0;
+                onlineStatus.textContent = '🟢 Онлайн · ' + cnt + ' участник' + getPlural(cnt);
+                onlineStatus.style.color = 'var(--success)';
+                break;
+            case 'error':
+                console.warn('Ошибка сервера:', data.text);
+                if (data.text && data.text.includes('никнейм')) {
+                    showModal('Этот никнейм уже занят. Выберите другой.');
                 }
-            });
+                break;
+        }
+    }
 
-            // ============ Закрытие соединения при уходе со страницы ============
-            window.addEventListener('beforeunload', () => {
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ type: 'leave' }));
-                    ws.close(1000, 'Ухожу');
-                }
-            });
+    function getPlural(n) {
+        if (n % 10 === 1 && n % 100 !== 11) return 'а';
+        if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) return 'ов';
+        return 'ов';
+    }
 
-            // ============ Восстановление фокуса на инпуте ============
-            document.addEventListener('click', (e) => {
-                if (appContainer.style.display !== 'none' &&
-                    !e.target.closest('input') &&
-                    !e.target.closest('button') &&
-                    !e.target.closest('.modal-overlay')) {
-                    messageInput.focus();
-                }
-            });
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (!text) return;
+        if (isMessageForbidden(text)) {
+            showToast('🚫 Запрещённое содержимое: реклама, ссылки, порно и т.п.');
+            messageInput.focus();
+            return;
+        }
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            onlineStatus.textContent = '⚠️ Нет соединения. Переподключение...';
+            onlineStatus.style.color = 'var(--danger)';
+            connectWebSocket();
+            return;
+        }
+        ws.send(JSON.stringify({ type: 'message', text }));
+        messageInput.value = '';
+        messageInput.focus();
+    }
 
-            // ============ Инициализация ============
-            nicknameInput.focus();
-            modalOverlay.style.display = 'flex';
-            appContainer.style.display = 'none';
+    // Модальное окно
+    function showModal(errorMsg) {
+        modalOverlay.style.display = 'flex';
+        appContainer.style.display = 'none';
+        errorText.textContent = errorMsg || '';
+        nicknameInput.value = nickname || '';
+        setTimeout(() => nicknameInput.focus(), 150);
+    }
 
-            console.log('💬 Чат-клиент инициализирован.');
-            console.log('Подключение к WebSocket: ' +
-                (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host);
-        })();
-    </script>
+    function hideModal() {
+        modalOverlay.style.display = 'none';
+        appContainer.style.display = 'flex';
+        messageInput.focus();
+    }
+
+    // События
+    btnJoin.addEventListener('click', () => {
+        const raw = nicknameInput.value.trim();
+        if (!raw) { errorText.textContent = 'Введите никнейм'; return; }
+        if (raw.length < 2) { errorText.textContent = 'Минимум 2 символа'; return; }
+        if (raw.length > 24) { errorText.textContent = 'Максимум 24 символа'; return; }
+        if (!/^[a-zA-Zа-яА-ЯёЁ0-9_\-\s]+$/.test(raw)) {
+            errorText.textContent = 'Только буквы, цифры, пробелы, _ и -';
+            return;
+        }
+        nickname = raw;
+        errorText.textContent = '';
+        hideModal();
+        connectWebSocket();
+    });
+
+    nicknameInput.addEventListener('keydown', e => { if (e.key === 'Enter') btnJoin.click(); });
+    btnSend.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    // Панель пользователей
+    btnToggleUsers.addEventListener('click', () => userPanel.classList.toggle('open'));
+    btnClosePanel.addEventListener('click', () => userPanel.classList.remove('open'));
+    document.addEventListener('click', (e) => {
+        if (!userPanel.contains(e.target) && e.target !== btnToggleUsers) {
+            userPanel.classList.remove('open');
+        }
+    });
+
+    window.addEventListener('beforeunload', () => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'leave' }));
+            ws.close(1000, 'Ухожу');
+        }
+    });
+
+    // Автофокус
+    document.addEventListener('click', (e) => {
+        if (appContainer.style.display !== 'none' &&
+            !e.target.closest('input') && !e.target.closest('button') && !e.target.closest('.modal-overlay')) {
+            messageInput.focus();
+        }
+    });
+
+    // Старт
+    nicknameInput.focus();
+    modalOverlay.style.display = 'flex';
+    appContainer.style.display = 'none';
+})();
+</script>
 </body>
 </html>
